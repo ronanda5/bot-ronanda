@@ -10,3 +10,15 @@ The following permissions are needed in order for the bot to work properly :
 
 - Send Messages
 - Embed Links
+
+# Installation
+
+1. Make a copy of `.env.example` in a file named `.env` :
+
+`cp .env.example .env`
+
+2. Get the token of your discord bot from your discord developer portal. If you don't know how, search how to create a discord bot on the internet.
+
+3. Paste the token in the `.env` file.
+
+4. Get a database running and fill the `.env` file with its credentials.

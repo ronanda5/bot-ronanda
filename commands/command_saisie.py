@@ -1,5 +1,5 @@
 from commands.command import Command, EnumCommand
-from forms.form import Form
+from form import Form
 
 
 class CommandSaisie(Command):
