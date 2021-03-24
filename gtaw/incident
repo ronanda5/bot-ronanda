@@ -1,0 +1,24 @@
+[divbox=white]
+
+
+[center][LSPDHEADER][/LSPDHEADER][/center]
+
+
+
+[hr][/hr]
+[center][b][size=150]LOS SANTOS POLICE DEPARTMENT[/size]
+[size=135]RAPPORT D'INCIDENT[/size][/b][/center]
+[hr][/hr]
+
+
+
+Nom, prénom, grade: $grade $officer
+Date et heure: $date
+Lieu de l'incident: $lieu
+Contexte de l'incident: $contexte
+
+Preuve ou autres pièces à joindre: $preuves
+
+
+
+[right]$signature[/right][/divbox]

@@ -1,0 +1,31 @@
+[divbox=white]
+
+
+[center][LSPDHEADER][/LSPDHEADER][/center]
+
+
+
+[hr][/hr]
+[center][b][size=150]LOS SANTOS POLICE DEPARTMENT[/size]
+[size=135]RAPPORT DE SAISIE[/size][/b][/center]
+[hr][/hr]
+
+
+[size=150]CASIER A PREUVE N°$casier[/size]
+
+Nom, prénom, grade: $grade $officer
+Date et heure: $date
+Lieu de l'incident: $lieu
+Catégorie de saisie: $categories
+Type de saisie: $types
+Quantité saisie: $quantites
+
+Suspect: $suspect
+Contexte de la saisie: $contexte
+
+
+Photo de la saisie: $photo
+
+
+
+[right]$signature[/right][/divbox]
