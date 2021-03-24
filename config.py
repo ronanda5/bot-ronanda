@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 
 class Config:
 
-    COMMAND_PREFIX = "#"
+    COMMAND_PREFIX = "!"
 
     forms = {
         EnumCommand.SEIZURE: {

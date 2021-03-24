@@ -32,10 +32,10 @@ class CommandSignature(Command):
             )
             embed.set_thumbnail(url=str(Seal.LSPD))
             embed.add_field(name="Syntaxe",
-                            value="```#signature <signature>```",
+                            value="```!signature <signature>```",
                             inline=False)
             embed.add_field(name="Exemple 1",
-                            value="```#signature K.KRAUS 12345 BI```",
+                            value="```!signature K.KRAUS 12345 BI```",
                             inline=False)
             embed.add_field(name="Votre signature actuelle",
                             value="`{}`".format(ronanda.get_signature(message.author.nick)),

@@ -58,7 +58,7 @@ class Ronanda:
         if self.get_signature(officer) == officer:
             await self.answer(
                 "Par défaut, vos formulaires sont signés : `{}`\n"
-                "`#signature` pour modifier la signature de vos formulaires :person_tipping_hand:".format(officer))
+                "`!signature` pour modifier la signature de vos formulaires :person_tipping_hand:".format(officer))
 
     def get_signature(self, officer):
         character = self.db.get_character(name=officer)

@@ -31,10 +31,10 @@ class CommandGrade(Command):
             )
             embed.set_thumbnail(url=str(Seal.LSPD))
             embed.add_field(name="Syntaxe",
-                            value="```#grade <grade>```",
+                            value="```!grade <grade>```",
                             inline=False)
             embed.add_field(name="Exemple",
-                            value="```#grade Officier II```",
+                            value="```!grade Officier II```",
                             inline=False)
             embed.add_field(name="Votre grade actuel ({})".format(message.author.nick),
                             value="`{}`".format(ronanda.get_grade(message.author.nick)),

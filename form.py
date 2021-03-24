@@ -66,7 +66,7 @@ class Form:
             embed.set_thumbnail(url=str(self.seal))
             embed.add_field(name="Paramètres", value="{}".format(self._get_syntax()),
                             inline=False)
-            embed.add_field(name="Exemple", value="```#{} {}```".format(self.command.value, self.command_example),
+            embed.add_field(name="Exemple", value="```!{} {}```".format(self.command.value, self.command_example),
                             inline=False)
             if self.command == EnumCommand.ARREST:
                 embed.add_field(name="Plaidoiries possibles",
@@ -123,7 +123,7 @@ class Form:
     def _get_syntax(self):
         args = ['<{}>'.format(template_arg) for template_arg in self.template_args]
         args_str = ' '.join(args)
-        return "```#{} {}```".format(self.command, args_str)
+        return "```!{} {}```".format(self.command, args_str)
 
     def _get_parameters(self):
         parameters_str = ""

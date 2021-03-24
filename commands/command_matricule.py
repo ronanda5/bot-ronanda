@@ -32,10 +32,10 @@ class CommandMatricule(Command):
             )
             embed.set_thumbnail(url=str(Seal.LSPD))
             embed.add_field(name="Syntaxe",
-                            value="```#matricule <matricule>```",
+                            value="```!matricule <matricule>```",
                             inline=False)
             embed.add_field(name="Exemple",
-                            value="```#matricule 777```",
+                            value="```!matricule 777```",
                             inline=False)
             embed.add_field(name="Votre matricule actuel ({})".format(message.author.nick),
                             value="`{}`".format(ronanda.get_matricule(message.author.nick)),

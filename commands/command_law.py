@@ -63,11 +63,11 @@ class CommandLaw(Command):
                 title=":information_source: Syntaxe",
                 description="Rechercher un texte dans la loi à partir d'un mot clé."
             )
-            embed.add_field(name="Syntaxe", value="```#loi <mot-clé>```",
+            embed.add_field(name="Syntaxe", value="```!loi <mot-clé>```",
                             inline=False)
-            embed.add_field(name="Exemple", value="```#loi meurtre```",
+            embed.add_field(name="Exemple", value="```!loi meurtre```",
                             inline=False)
-            embed.add_field(name="Catégories de peines", value="```#loi 449```",
+            embed.add_field(name="Catégories de peines", value="```!loi 449```",
                             inline=False)
             embed.set_thumbnail(url=str(Seal.SA))
             await message.channel.send(embed=embed)
