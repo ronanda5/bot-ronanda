@@ -1,12 +1,12 @@
 import discord
 
-from command import Command
-from db import DB
+from commands.command import Command
 from seal import Seal
 
 
 class CommandInfos(Command):
-    async def _process(self, ronanda):
+
+    async def process(self, ronanda):
         message = ronanda.message
         embed = discord.Embed(
             colour=discord.Colour.from_rgb(210, 190, 100),
@@ -14,7 +14,7 @@ class CommandInfos(Command):
             description="Vos informations et vos personnages."
         )
         embed.set_thumbnail(url=str(Seal.LSPD))
-        user = DB().get_user(tag=message.author)
+        user = ronanda.db.get_user(tag=message.author)
         serveur = user.get('server')
         embed.add_field(name="Serveur",
                         value="```{}```".format("Aucun" if serveur is None else serveur),
@@ -22,7 +22,7 @@ class CommandInfos(Command):
         embed.add_field(name="Formulaires & recherches",
                         value="```{}```".format(user['stats']),
                         inline=True)
-        characters = DB().get_characters(user_id=user['id'])
+        characters = ronanda.db.get_characters(user_id=user['id'])
         number = 1
         for character in characters:
             embed.add_field(name="\u200b\nPersonnage #{}".format(number),

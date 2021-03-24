@@ -1,16 +1,15 @@
-from command import Command
-from gtaw.form import Form
-from seal import Seal
+from commands.command import Command, EnumCommand
+from forms.form import Form
 
 
-class CommandIncident(Command):
+class CommandArrestation(Command):
 
-    async def _process_gtaw(self, ronanda):
+    async def process(self, ronanda):
+        character = ronanda.db.get_character(name=ronanda.message.author.nick)
         messages, embed = Form(
-            "incident",
+            EnumCommand.ARREST,
             ronanda.message.content,
-            seal=Seal.LSPD,
-            officer=ronanda.message.author.nick
+            character=character
         ).generate()
         await ronanda.answer(":printer:")
         for message in messages:

@@ -1,8 +1,8 @@
 import shlex
 import discord
 
+from commands.command import EnumCommand
 from config import Config
-from db import DB
 from seal import Seal
 from string import Template
 from datetime import datetime
@@ -10,14 +10,14 @@ from datetime import datetime
 
 class Form:
 
-    def __init__(self, command, message, seal=Seal.LSPD, officer=None):
+    def __init__(self, command: EnumCommand, message, seal=Seal.LSPD, character=None):
         self.command = command
         self.command_example = Config.forms[command]["command_example"]
 
         self.template_filepath = Config.forms[command]["template_filepath"]
         self.template_args = Config.forms[command].get("template_args", [])
-        self.template_optional_args = Config.forms[command].get("template_optional_args", [])
         self.template_link = Config.forms[command].get("template_link", "*Lien à venir*")
+        self.instructions = Config.forms[command].get("instructions", [])
 
         self.seal = seal
 
@@ -25,10 +25,9 @@ class Form:
 
         self.date = datetime.today().strftime("%d/%b/%Y à %H:%M").upper()
 
-        self.officer = officer
+        self.officer = character.get('name')
         self.static_parameters = {"officer": self.officer}
         if self.officer is not None:
-            character = DB().get_character(name=self.officer)
             self.grade = character.get('grade')
             if character.get('signature') is None:
                 self.signature = self.officer
@@ -49,17 +48,8 @@ class Form:
     def _get_args(self, message):
         args = shlex.split(message)
         template_values = args[1:len(self.template_args) + 1]
-        template_optional_values = args[len(self.template_args) + 1:]
 
         self.parameters.update(dict(zip(self.template_args, template_values)))
-        # fill optional parameters with default
-        for template_optional_arg in self.template_optional_args:
-            self.parameters.update(template_optional_arg)
-        # fill optional parameters with provided args
-        for template_optional_value in template_optional_values:
-            if template_optional_value.find('=') != -1:
-                optional_arg = template_optional_value.split("=")
-                self.parameters.update({optional_arg[0]: optional_arg[1]})
 
         return self.parameters
 
@@ -76,9 +66,9 @@ class Form:
             embed.set_thumbnail(url=str(self.seal))
             embed.add_field(name="Paramètres", value="{}".format(self._get_syntax()),
                             inline=False)
-            embed.add_field(name="Exemple", value="```#{} {}```".format(self.command, self.command_example),
+            embed.add_field(name="Exemple", value="```#{} {}```".format(self.command.value, self.command_example),
                             inline=False)
-            if self.command == "arrestation":
+            if self.command == EnumCommand.ARREST:
                 embed.add_field(name="Plaidoiries possibles",
                                 value="`Coupable sans commis d'office`\u200b\n"
                                       "`Coupable avec commis d'office`\u200b\n"
@@ -108,37 +98,31 @@ class Form:
 
         embed = discord.Embed(
             colour=discord.Colour.from_rgb(210, 190, 100),
-            title=":printer: Impression d'un formulaire ({})".format(self.command),
+            title=":printer: Impression d'un formulaire ({})".format(self.command.value),
             description="Fait par {} {} le {}".format(
                 self.grade, self.officer, self.date)
         )
         embed.set_thumbnail(url=str(Seal.LSPD))
+
         embed = self._feedback_parameters(embed)
-        if self.command == "arrestation":
-            suspect_name = self.parameters.get("suspect")
-            suspect_name_url = suspect_name.replace(' ', '_')
-            embed.add_field(name="A mettre dans le MDC ici (Actions > Créer un casier > Type = Rapport d'arrestation)",
-                            value="https://mdc-fr.gta.world/record/{}".format(suspect_name_url),
+
+        suspect_name = self.parameters.get("suspect")
+        for instruction in self.instructions:
+            instruction_name = instruction["name"]
+            instruction_value = instruction["value"]
+            if suspect_name is not None:
+                instruction_value = instruction_value.format(suspect_name_url=suspect_name.replace(' ', '_'),
+                                                             suspect_name=suspect_name.upper())
+            embed.add_field(name=instruction_name,
+                            value=instruction_value,
                             inline=False)
-            embed.add_field(name="MEA **Copiez le texte que vous avez collé dans le MDC, ici**",
-                            value="https://forum-fr.gta.world/index.php?/forum/201-demandes-de-mise-en-accusation/&do=add",
-                            inline=False)
-            embed.add_field(name="Titre",
-                            value="```Demande de mise en accusation - {}```".format(suspect_name.upper()), inline=False)
-            embed.set_footer(text="Suivez les étapes ci-dessus et voilà !")
-        else:
-            embed.add_field(name="A soumettre ici",
-                            value="{}".format(self.template_link), inline=False)
-            embed.set_footer(text="Copiez, cliquez sur le lien, collez et soumettez, voilà !")
+        embed.set_footer(text="Suivez les instructions ci-dessus et voilà !")
 
         return messages, embed
 
     def _get_syntax(self):
         args = ['<{}>'.format(template_arg) for template_arg in self.template_args]
-        optional_args = ['<{} ({} par défaut)>'.format(
-            list(template_optional_arg.keys())[0], list(template_optional_arg.values())[0])
-                         for template_optional_arg in self.template_optional_args]
-        args_str = ' '.join(args + optional_args)
+        args_str = ' '.join(args)
         return "```#{} {}```".format(self.command, args_str)
 
     def _get_parameters(self):

@@ -2,24 +2,26 @@ import time
 
 import discord
 
-from command import Command
+from commands.command import Command
 from law import Law
 from seal import Seal
 
 
 class CommandLaw(Command):
+
     def __init__(self):
         super().__init__()
+        self.law = Law()
         self.required = ['mot-clé']
 
-    async def _process_gtaw(self, ronanda):
+    async def process(self, ronanda):
         message = ronanda.message
         args = message.content.split(' ')
 
         if len(args) > len(self.required):
 
             requested_charge = ' '.join(args[1:])
-            laws = Law().find(requested_charge)
+            laws = self.law.find(requested_charge)
 
             if len(laws) > 0:
 

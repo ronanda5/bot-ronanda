@@ -1,53 +1,45 @@
+from commands.command import EnumCommand
 from config import logging
-import re
 import discord
 
-from db import DB
 from ronanda import Ronanda
 
 
 class Bot(discord.Client):
 
-    channel_ids = {}
-
-    def __init__(self):
+    def __init__(self, command_prefix, db):
         super().__init__()
-        DB()
 
-    async def setup(self):
-        pass
-
-    def get_command(self, message):
-        args = message.content.split(' ')
-        channel = None
-        matches = re.match("<#([0-9]*)>", args[0])
-        if matches:
-            channel = self.get_channel(int(matches.group(1)))
-        command = None
-        if channel is not None:
-            command, args[0] = channel.name, channel.name
-        return command
+        self.command_prefix = command_prefix
+        self.db = db
 
     async def on_ready(self):
-        await self.setup()
+        # add help on how to interact with the bot
         await self.change_presence(activity=discord.Game("@Ronanda"))
-        logging.info('Ronanda is ready')
 
-    async def on_member_join(self, member):
-        channel = discord.utils.get(self.get_all_channels(), name="hall")
-        await Ronanda.welcome(member, channel)
+        logging.info("Ronanda is now listening !")
 
     async def on_message(self, message):
+        # do not process message if message is from a bot
         if message.author.bot:
             return
 
-        if message.content.startswith("!"):
-            await Ronanda(message).answer(
-                "J'évolue ! Les commandes commencent par **#** et non plus par **!**."
-                "\nTaggez moi avec {} pour afficher toutes les commandes disponibles.".format(self.user.mention))
+        ronanda = Ronanda(message, self.db)
+
+        # display help if bot is mentioned
+        is_bot_mentioned = f'<@!{self.user.id}>' in message.content
+        if is_bot_mentioned:
+            await ronanda.help()
+
+        # process request if command name is specified
+        command_name = self.get_command_from_discord_message(message)
+        if command_name is not None:
+            await ronanda.process(command=command_name)
+
+    def get_command_from_discord_message(self, message):
+        # check if user message starts with the command prefix
+        if not message.content.startswith(self.command_prefix):
             return
 
-        mentioned = f'<@!{self.user.id}>' in message.content
-        command = self.get_command(message)
-        if mentioned or command is not None:
-            await Ronanda(message).process(command=command, help=mentioned)
+        # parse string to get command name
+        return message.content.split(" ")[0].replace(self.command_prefix, "")

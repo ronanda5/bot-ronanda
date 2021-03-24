@@ -108,6 +108,3 @@ class Law:
                 continue
             occurrences[title] = content
         return occurrences
-
-
-Law()

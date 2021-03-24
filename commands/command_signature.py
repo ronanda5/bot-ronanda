@@ -1,27 +1,26 @@
 import discord
 
-from command import Command
-from common import get_signature
-from db import DB
+from commands.command import Command
 from seal import Seal
 
 
 class CommandSignature(Command):
-    async def _process(self, ronanda):
+
+    async def process(self, ronanda):
         message = ronanda.message
         character_name = message.author.nick
         args = message.content.split(' ')
         required = ['signature']
         if len(args) > len(required):
             signature_request = ' '.join(args[1:]).strip()
-            DB().update_character(name=message.author.nick, signature=signature_request)
+            ronanda.db.update_character(name=message.author.nick, signature=signature_request)
             embed = discord.Embed(
                 colour=discord.Colour.from_rgb(210, 190, 100),
                 title=":white_check_mark: Changement de signature effectué",
                 description="Changement de la signature de {character_name}".format(character_name=character_name)
             )
             embed.add_field(name="Nouvelle signature",
-                            value="```{}```".format(get_signature(message.author.nick)),
+                            value="```{}```".format(ronanda.get_signature(message.author.nick)),
                             inline=False)
             embed.set_thumbnail(url=str(Seal.LSPD))
             await message.channel.send(embed=embed)
@@ -39,6 +38,6 @@ class CommandSignature(Command):
                             value="```#signature K.KRAUS 12345 BI```",
                             inline=False)
             embed.add_field(name="Votre signature actuelle",
-                            value="`{}`".format(get_signature(message.author.nick)),
+                            value="`{}`".format(ronanda.get_signature(message.author.nick)),
                             inline=False)
             await message.channel.send(embed=embed)
